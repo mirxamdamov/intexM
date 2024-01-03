@@ -2,34 +2,37 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function Adminp() {
-  const [number, setNumber] = useState<string>("");
+function Adminp1() {
+  const [catigory, setCatygory] = useState<any>([]);
   const [numberinp, setNumberinp] = useState<any>("");
   const [address, setAddres] = useState<any>("");
-  const [location, setLocation] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [openl, setOpenL] = useState<boolean>(false);
   const navigate = useNavigate();
-
+  function deleteCategory(id: number) {
+    axios.delete(`http://localhost:3000/catigory/${id}`).then((res) => {
+      console.log(res);
+    });
+  }
   async function getData() {
     const registerOptions = {
       method: "GET",
-      url: `http://localhost:3000/users/${localStorage.getItem("name")}`,
-      data: JSON.stringify({
-        username: localStorage.getItem("name"),
-      }),
+      url: `http://localhost:3000/catigory`,
     };
     const respose: any = await axios
       .request(registerOptions)
       .then((e) => {
-        setNumber(e.data.phone_number);
-        setLocation(e.data.location);
+        setCatygory(e.data);
       })
       .catch((e) => {
         console.log(e);
       });
   }
-  getData();
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   const pathname = window.location.pathname.slice(7);
   try {
     const el: any = document.querySelector(`.${pathname}`);
@@ -60,28 +63,31 @@ function Adminp() {
         <p className="mt-4 text-xl sayd">Сайт</p>
       </section>
       <ul className="absolute top-[160px] start-[300px]">
-        <li className="w-[1088px] h-[69px] flex bg-white rounded-3xl py-5 px-12">
-          <p>Телефонный номер</p>
-          <p className="ms-[110px] me-[620px]">{number}</p>
-          <button
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            <img src="../../public/edit.svg" alt="" />
-          </button>
-        </li>
-        <li className="w-[1088px] h-[69px] mt-5 flex bg-white rounded-3xl py-5 px-12">
-          <p>Адрес</p>
-          <p className="ms-[210px] me-[620px]">{location}</p>
-          <button
-            onClick={() => {
-              setOpenL(true);
-            }}
-          >
-            <img src="../../public/edit.svg" alt="" />
-          </button>
-        </li>
+        {catigory.map((e: any) => {
+          return (
+            <li
+              key={e.id}
+              className="relative w-[1088px] h-[69px] flex bg-white rounded-3xl py-5 px-12 mt-2"
+            >
+              <p>{e.title}</p>
+              <p className="ms-[110px] me-[620px]"></p>
+              <button
+                className="absolute end-8"
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                <img src="../../public/edit.svg" alt="" />
+              </button>
+              <button
+                className="absolute end-16"
+                onClick={() => deleteCategory(e.id)}
+              >
+                <img src="../../public/delete.png" alt="" />
+              </button>
+            </li>
+          );
+        })}
       </ul>
       <section
         className={`fixed inset-0  md:flex  justify-center items-center transition-colors  ${
@@ -197,4 +203,4 @@ function Adminp() {
   );
 }
 
-export default Adminp;
+export default Adminp1;
