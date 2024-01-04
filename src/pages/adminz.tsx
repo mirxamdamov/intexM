@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function Adminp1() {
-  const [e1, setE1] = useState<any>([]);
-  const [catigory, setCatygory] = useState([]);
-  const [numberinp, setNumberinp] = useState("");
-  const [address, setAddres] = useState("");
-  const [open, setOpen] = useState(false);
-  const [openl, setOpenL] = useState(false);
+function Adminpz() {
+  const [numberinp, setNumberinp] = useState<any>("");
+  const [address, setAddres] = useState<any>("");
+  const [products, setProducts] = useState<any>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [openl, setOpenL] = useState<boolean>(false);
   const navigate = useNavigate();
   const serverUrl = "http://localhost:3000"; // Server manzili
 
   async function deleteCategory(id: number) {
     try {
-      const response = await axios.post(`${serverUrl}/catigory/${id}`);
+      const response = await axios.post(`${serverUrl}/orders/${id}`);
       console.log(response);
       getData();
     } catch (error) {
@@ -23,29 +22,39 @@ function Adminp1() {
   }
 
   async function getData() {
-    try {
-      const response = await axios.get("http://localhost:3000/catigory");
-      setCatygory(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    const registerOptions = {
+      method: "GET",
+      url: `http://localhost:3000/users`,
+    };
+    const respose: any = await axios
+      .request(registerOptions)
+      .then((e) => {
+        setProducts(e.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
-
   useEffect(() => {
     getData();
-  }, [openl,open]);
+  }, []);
 
   const pathname = window.location.pathname.slice(7);
   try {
-    const el: any = document.querySelector(`.${pathname}`);
+    const el: any = document.querySelector(`.zakaz`);
+    const el1: any = document.querySelector(`#zakaz`);
+
+    el1.style.color = "#009398";
     el.style.color = "#009398";
   } catch (error) {}
 
   return (
     <main className="bg-[#d6d3d341]">
-      <nav className="flex  text-[#A6A6A6] bg-transparent h-[90px] fixed w-full py-[34px]  border-b-2 px-[51px] ">
-        <h1 className="text-[#009398]  font-medium text-xl">INTEX-MARKET.UZ</h1>
-        <div className="flex gap-10 absolute end-[65px]">
+      <nav className="flex  text-[#A6A6A6] bg-transparent h-[90px] w-full py-[34px]  border-b-2 px-[51px] ">
+        <div className="flex gap-10  end-[65px]">
+          <h1 className="text-[#009398] abs font-medium text-xl">
+            INTEX-MARKET.UZ
+          </h1>
           <p>
             <Link to={"/"}>Просмотр веб-сайта</Link>
           </p>
@@ -56,16 +65,7 @@ function Adminp1() {
           </p>
         </div>
       </nav>
-      <button
-        onClick={() => {
-          setOpen(true);
-        }}
-        className="w-[242px] h-[64px] rounded-full absolute top-24 end-10 text-white bg-[#009398]"
-      >
-        + Добавить категории
-      </button>
-
-      <section className="pt-[126px] h-[100vh] text-[#B4B4C6] bg-white w-[262px] pl-[41px]">
+      <section className="pt-[26px] h-[100vh] text-[#B4B4C6] bg-white w-[262px] pl-[41px]">
         <p className="mt-4 text-xl product">
           <Link to="/admin/products/10">Продукты</Link>
         </p>
@@ -79,35 +79,45 @@ function Adminp1() {
           <Link to="/admin/sayd">Сайт</Link>
         </p>
       </section>
-      <ul className="absolute top-[160px] start-[300px]">
-        {catigory.map((e: any) => {
-          // setE1(e)
-          return (
-            <li
-              key={e.id}
-              className="relative w-[1088px] h-[69px] flex bg-white rounded-3xl py-5 px-12 mt-2"
-            >
-              <p>{e.title}</p>
-              <p className="ms-[110px] me-[620px]"></p>
-              <button
-                className="absolute end-8"
-                onClick={() => {
-                  setE1(e.id);
-
-                  setOpenL(true);
-                }}
+      <ul className="flex absolute top-28 start-[45%] gap-[75px] text-[#A6A6A6] text-3xl">
+        <li id="zakaz">Заказы</li>
+        <li>
+          <Link to="konsultatsiya">Консультации</Link>
+        </li>
+      </ul>
+      <ul className="absolute w-[1088px] h-[100%] block top-[160px] start-[300px] overflow-y-auto ">
+        <li className="w-[1068px] mb-10 h-[69px] flex bg-white rounded-3xl py-5 px-12">
+          <p>Имя клиента</p>
+          <p className="mx-[50px]">Телефон</p>
+          <p className="mx-[60px]">Цена(сум)</p>
+          <p className="mx-[60px]">Адрес</p>
+          <p className="mx-[60px]">Время</p>
+          <p className="ms-[120px]">Действия</p>
+        </li>
+        <table>
+          {products.map((e: any) => {
+            return (
+              <tr
+                key={e.id}
+                className=" w-[1068px] mt-2 h-[69px] flex bg-white rounded-3xl py-5 px-12"
               >
-                <img src="../../public/edit.svg" alt="" />
-              </button>
-              <button
-                className="absolute end-16"
-                onClick={() => deleteCategory(e.id)}
-              >
-                <img src="../../public/delete.png" alt="" />
-              </button>
-            </li>
-          );
-        })}
+                <td className="w-[131px]">{e.username}</td>
+                <td className="w-[181px]">{e?.phone_number}</td>
+                <td className="w-[141px]">{e?.Products?.[0]?.chegPrice}</td>
+                <td className="w-[181px]">{e?.location}</td>
+                <td className="w-[200px] ms-5">{e?.createdAt}</td>
+                <td className=" ms-20">
+                  <p
+                    className="absolute end-16"
+                    onClick={() => deleteCategory(e.Products?.[0]?.Orders?.id)}
+                  >
+                    <img src="../../public/delete.png" alt="" />
+                  </p>
+                </td>
+              </tr>
+            );
+          })}
+        </table>
       </ul>
       <section
         className={`fixed inset-0  md:flex  justify-center items-center transition-colors  ${
@@ -131,26 +141,26 @@ function Adminp1() {
             />
           </button>
 
-          <h1 className="text-3xl text-[#009398]">Добавить категории</h1>
+          <h1 className="text-3xl text-[#009398]">Телефонный номер</h1>
           <form
             className="absolute top-[145px] start-[362px] flex-none"
             onSubmit={(e) => {
               e.preventDefault();
-              fetch("http://localhost:3000/catigory", {
+              fetch("http://localhost:3000/usersa", {
                 method: "POST",
                 body: JSON.stringify({
-                  title: numberinp,
+                  username: localStorage.getItem("name"),
+                  phone_number: numberinp,
                 }),
               }).then((res) =>
                 res.json().then((res) => {
                   console.log(res);
                   setOpen(false);
-                  getData();
                 })
               );
             }}
           >
-            <label htmlFor="tel">Название</label>
+            <label htmlFor="tel">Номер</label>
             <br />
             <input
               id="tel"
@@ -159,7 +169,7 @@ function Adminp1() {
                 setNumberinp(e.target.value);
               }}
               className="w-[378px] h-[33px] border-b outline-none focus:border-b"
-              type="text"
+              type="number"
             />
           </form>
         </div>
@@ -186,27 +196,26 @@ function Adminp1() {
             />
           </button>
 
-          <h1 className="text-3xl text-[#009398]">Категории</h1>
+          <h1 className="text-3xl text-[#009398]">Телефонный номер</h1>
           <form
             className="absolute top-[145px] start-[362px] flex-none"
             onSubmit={async (e) => {
               e.preventDefault();
-              await fetch("http://localhost:3000/catigorya", {
+              await fetch("http://localhost:3000/usersa", {
                 method: "POST",
                 body: JSON.stringify({
-                  id: e1,
-                  title: address,
+                  username: localStorage.getItem("name"),
+                  location: address,
                 }),
               }).then((res) =>
                 res.json().then((res) => {
-                  getData();
                   console.log(res);
                   setOpenL(false);
                 })
               );
             }}
           >
-            <label htmlFor="adres">категории</label>
+            <label htmlFor="adres">Адрес</label>
             <br />
             <input
               id="adres"
@@ -224,4 +233,4 @@ function Adminp1() {
   );
 }
 
-export default Adminp1;
+export default Adminpz;

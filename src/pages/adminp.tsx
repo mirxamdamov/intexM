@@ -52,10 +52,14 @@ function Adminp() {
         </div>
       </nav>
       <section className="pt-[126px] h-[100vh] text-[#B4B4C6] bg-white w-[262px] pl-[41px]">
-        <p className="mt-4 text-xl product">Продукты</p>
-        <p className="mt-4 text-xl zakaz">Заказы</p>
+        <p className="mt-4 text-xl product">
+          <Link to="/admin/kategory">Продукты</Link>
+        </p>
+        <p className="mt-4 text-xl zakaz">
+          <Link to="/admin/zaka">Заказы</Link>
+        </p>
         <p className="mt-4 text-xl kategory">
-          <a href="/admin/kategory">Категории</a>
+          <Link to="/admin/kategory">Категории</Link>
         </p>
         <p className="mt-4 text-xl sayd">Сайт</p>
       </section>
